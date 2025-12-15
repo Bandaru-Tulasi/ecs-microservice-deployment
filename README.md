@@ -23,6 +23,7 @@ Implementing health checks and managed scaling
 This is the exact architecture used by cloud-native companies to run microservices in production.
 
 🧱 Architecture Overview
+
           ┌───────────────────────────┐
           │   Application Load        │
           │      Balancer (ALB)       │
@@ -60,6 +61,7 @@ IAM Roles & Permissions
 VPC Networking (Subnets, SGs)
 
 📁 Project Structure
+
 ecs-microservice-deployment/
 │
 ├── app.py               # Flask app (Hello World)
@@ -68,6 +70,7 @@ ecs-microservice-deployment/
 └── README.md            # Documentation
 
 🚀 Step-by-Step Deployment
+
 1️⃣ Build Docker Image
 docker build -t ecs-microservice .
 
@@ -103,6 +106,7 @@ You should see:
 Hello from Flask ECS App!
 
 🩺 Health Check Configuration
+
 Setting	Value
 Protocol	HTTP
 Path	/

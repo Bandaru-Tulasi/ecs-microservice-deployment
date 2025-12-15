@@ -204,7 +204,7 @@ README.md            # Documentation
 ```
 ---
 
-🚀 Future Enhancements
+## 🚀 Future Enhancements
 
 Add CI/CD Pipeline (GitHub Actions / AWS CodePipeline)
 Automate image building, security scanning, and deployments to ECS.

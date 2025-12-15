@@ -4,7 +4,10 @@ This project demonstrates how to containerize a Python Flask microservice using 
 
 This is an excellent portfolio project for showcasing AWS Cloud / DevOps / Microservices skills.
 
+---
+
 📌 Architecture Overview
+
                 +-----------------------------+
 User (Browser) ---> |  Application Load Balancer |
                 +-----------+-----------------+
@@ -26,6 +29,8 @@ User (Browser) ---> |  Application Load Balancer |
                 | (Stores Docker Image)       |
                 +-----------------------------+
 
+                ---
+
 🧰 Technologies Used
 
 Docker (containerization)
@@ -40,7 +45,10 @@ IAM Roles & Policies (permissions)
 
 VPC Networking (subnets, ENIs, security groups)
 
+---
+
 🛠️ Project Setup — Step-by-Step
+
 1️⃣ Create a Flask Microservice
 
 app.py:
@@ -60,6 +68,8 @@ Create requirements.txt:
 
 flask
 
+---
+
 2️⃣ Create Dockerfile
 FROM python:3.9-slim
 WORKDIR /app
@@ -67,6 +77,8 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8080
 CMD ["python", "app.py"]
+
+---
 
 3️⃣ Build & Test Docker Image Locally
 docker build -t ecs-microservice .
@@ -86,6 +98,8 @@ Expected output:
 
 Hello from Flask ECS App!
 
+---
+
 4️⃣ Push Image to Amazon ECR
 Login to ECR:
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <ACCOUNT-ID>.dkr.ecr.us-east-1.amazonaws.com
@@ -95,6 +109,8 @@ docker tag ecs-microservice:latest <ACCOUNT-ID>.dkr.ecr.us-east-1.amazonaws.com/
 
 Push:
 docker push <ACCOUNT-ID>.dkr.ecr.us-east-1.amazonaws.com/ecs-microservice:latest
+
+---
 
 5️⃣ Create ECS Fargate Service
 
@@ -112,6 +128,8 @@ Health Check Path: /
 
 Desired Tasks: 1
 
+---
+
 6️⃣ ALB Target Group Configuration
 
 Protocol: HTTP
@@ -128,6 +146,8 @@ Interval: 10 seconds
 
 Timeout: 5 seconds
 
+---
+
 7️⃣ Test Your Deployment
 
 Open your ALB DNS name:
@@ -138,6 +158,8 @@ http://<your-load-balancer>.amazonaws.com
 You should see:
 
 Hello from Flask ECS App!
+
+---
 
 🌍 Final Public Endpoint
 

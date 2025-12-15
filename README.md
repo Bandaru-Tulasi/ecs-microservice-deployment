@@ -1,141 +1,113 @@
-🚀 AWS ECS Fargate Microservice Deployment
+🚀 AWS ECS Fargate Microservice Deployment — Docker + ECS + Fargate + ALB
 
-This project demonstrates how to containerize a simple Python Flask microservice using Docker and deploy it on AWS ECS Fargate with:
+This project demonstrates how to deploy a containerized Python Flask microservice using Docker, Amazon ECR, ECS Fargate, and an Application Load Balancer (ALB).
 
-Amazon ECR
+This setup represents a real-world cloud microservice deployment using fully managed container hosting (Fargate), secure image storage (ECR), and load-balanced traffic distribution (ALB).
+
+🎯 Why This Project Matters
+
+This project demonstrates real-world AWS cloud engineering skills, including:
+
+Building and packaging applications using Docker
+
+Deploying serverless containers using ECS Fargate
+
+Hosting microservices behind a production ALB
+
+Applying least-privilege IAM roles
+
+Understanding VPC networking, subnets & security groups
+
+Implementing health checks and managed scaling
+
+This is the exact architecture used by cloud-native companies to run microservices in production.
+
+🧱 Architecture Overview
+          ┌───────────────────────────┐
+          │   Application Load        │
+          │      Balancer (ALB)       │
+          │     (Public Access)       │
+          └───────────────┬──────────┘
+                          │
+                  ┌───────▼────────┐
+                  │   Target Group  │
+                  └───────┬────────┘
+                          │
+                 ┌────────▼───────────┐
+                 │   ECS Fargate       │
+                 │   Service + Tasks   │
+                 │ • Runs Flask App    │
+                 │ • Auto Scaling      │
+                 └────────┬───────────┘
+                          │
+          ┌───────────────▼────────────────┐
+          │        Amazon ECR Repository    │
+          │     Stores Docker container     │
+          └─────────────────────────────────┘
+
+🧰 Technologies Used
+
+Docker (Containerization)
+
+Amazon ECR (Container registry)
+
+Amazon ECS (Fargate)
 
 Application Load Balancer (ALB)
 
-CloudWatch Logs
+IAM Roles & Permissions
 
-VPC networking
-
-IAM Roles
-
-Auto-managed scaling
-
-This is a real-world production-style project that is perfect for your resume and AWS portfolio.
-
-🏗️ Architecture Overview
-               +-----------------------------+
-               |  Application Load Balancer  |
-               |      (Public Access)        |
-               +--------------+--------------+
-                              |
-                              v
-                 +-------------------------+
-                 |     Target Group        |
-                 +-------------------------+
-                              |
-                              v
-               +----------------------------------+
-               |       ECS Fargate Service        |
-               |  • Runs Dockerized Flask App     |
-               |  • Auto-managed Compute          |
-               +----------------+-----------------+
-                                |
-                                v
-               +----------------------------------+
-               |      Amazon Elastic Container    |
-               |             Registry (ECR)        |
-               +----------------------------------+
-
+VPC Networking (Subnets, SGs)
 
 📁 Project Structure
 ecs-microservice-deployment/
-│── app.py
-│── Dockerfile
-│── requirements.txt
-│── README.md
+│
+├── app.py               # Flask app (Hello World)
+├── Dockerfile           # Build instructions
+├── requirements.txt     # Dependencies
+└── README.md            # Documentation
 
-🧪 1. Flask Application (app.py)
-from flask import Flask
-
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "Hello from Flask ECS App!"
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
-
-📦 2. Dockerfile
-FROM python:3.9-slim
-
-WORKDIR /app
-
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-
-COPY . .
-
-CMD ["python", "app.py"]
-
-📄 3. requirements.txt
-flask
-
-🧱 4. Build & Run Locally with Docker
-Build the image:
+🚀 Step-by-Step Deployment
+1️⃣ Build Docker Image
 docker build -t ecs-microservice .
 
-Test locally:
-docker run -p 8080:8080 ecs-microservice
+2️⃣ Tag the Image for ECR
+docker tag ecs-microservice:latest \
+766377908037.dkr.ecr.us-east-1.amazonaws.com/ecs-microservice:latest
 
+3️⃣ Push Image to ECR
+docker push \
+766377908037.dkr.ecr.us-east-1.amazonaws.com/ecs-microservice:latest
 
-Visit:
+4️⃣ Create ECS Fargate Service
 
-http://localhost:8080
+Includes:
 
-🗄️ 5. Push Docker Image to Amazon ECR
-Log in to ECR:
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com
+Task definition
 
-Tag the image:
-docker tag ecs-microservice:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/ecs-microservice:latest
+0.5 vCPU + 1GB memory
 
-Push the image:
-docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/ecs-microservice:latest
+Public ALB + target group
 
-🏗️ 6. Deploy on AWS ECS Fargate
-✔ Create ECS Cluster
+Container port mapping (8080 → 80 ALB)
 
-Name: ecs-microservice-cluster
+5️⃣ Test the Application
 
-✔ Create Task Definition (Fargate)
+Open your ALB DNS URL:
 
-Image: ECR image URI
-
-Port: 8080
-
-CPU / Memory: default
-
-Execution Role: auto-created
-
-✔ Create Application Load Balancer
-
-Listener Port: 80
-
-Target Group Port: 80
-
-✔ Create ECS Service
-
-Platform: Fargate
-
-Load Balancer: Attach ALB
-
-Health check path: /
-
-🌍 7. Access Your Microservice
-
-Once ECS launches successfully, copy the Load Balancer DNS Name:
-
-http://<your-alb-dns-name>/
+http://<your-load-balancer>.amazonaws.com/
 
 
 You should see:
 
 Hello from Flask ECS App!
 
-
-🎉 Your ECS microservice is now live!
+🩺 Health Check Configuration
+Setting	Value
+Protocol	HTTP
+Path	/
+Port	traffic-port
+Healthy Threshold	2
+Unhealthy Threshold	2
+Interval	10 seconds
+Timeout	5 seconds

@@ -63,6 +63,7 @@ VPC Networking (Subnets, SGs)
 📁 Project Structure
 
 ecs-microservice-deployment/
+
 │
 ├── app.py               # Flask app (Hello World)
 ├── Dockerfile           # Build instructions
@@ -108,10 +109,17 @@ Hello from Flask ECS App!
 🩺 Health Check Configuration
 
 Setting	Value
+
 Protocol	HTTP
+
 Path	/
+
 Port	traffic-port
+
 Healthy Threshold	2
+
 Unhealthy Threshold	2
+
 Interval	10 seconds
+
 Timeout	5 seconds

@@ -62,8 +62,8 @@ VPC Networking (Subnets, SGs)
 
 📁 Project Structure
 
-ecs-microservice-deployment/
 
+ecs-microservice-deployment/
 │
 ├── app.py               # Flask app (Hello World)
 ├── Dockerfile           # Build instructions

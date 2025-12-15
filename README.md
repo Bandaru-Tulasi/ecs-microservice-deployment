@@ -180,7 +180,7 @@ Timeout: 5 seconds
 
 Open your ALB DNS name:
 ```
-http://<your-load-balancer>.amazonaws.com
+http://ecs-microservice-alb-2069729022.us-east-1.elb.amazonaws.com
 ```
 
 You should see:

@@ -4,9 +4,9 @@ This project demonstrates how to containerize a Python Flask microservice using 
 
 This is an excellent portfolio project for showcasing AWS Cloud / DevOps / Microservices skills.
 
----
 
 📌 Architecture Overview
+
 
                 +-----------------------------+
 User (Browser) ---> |  Application Load Balancer |
@@ -29,7 +29,6 @@ User (Browser) ---> |  Application Load Balancer |
                 | (Stores Docker Image)       |
                 +-----------------------------+
 
-                ---
 
 🧰 Technologies Used
 

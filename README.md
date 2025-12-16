@@ -202,42 +202,6 @@ Dockerfile           # Build instructions
 requirements.txt     # Python dependencies
 README.md            # Documentation
 ```
----
-
-## 🚀 Future Enhancements
-
-Add CI/CD Pipeline (GitHub Actions / AWS CodePipeline)
-Automate image building, security scanning, and deployments to ECS.
-
-Enable Autoscaling Policies
-Scale tasks based on CPU, memory, or ALB request count.
-
-Add Centralized Logging
-Ship logs to CloudWatch Logs or OpenSearch for better observability.
-
-Introduce a Service Mesh (AWS App Mesh)
-Provides traffic routing, retries, and metrics for microservices.
-
-Enhance Security with IAM Roles for Tasks
-Follow least-privilege access for AWS service integrations.
-
-Add Health Checks & Graceful Shutdown Logic
-Improve reliability by properly handling task stop/start.
-
-Implement Blue/Green Deployments
-Use CodeDeploy or versioned task definitions for zero-downtime releases.
-
-Container Image Scanning
-Use ECR Scan or Trivy to ensure the container is secure.
-
-Add HTTPS with ACM and Application Load Balancer
-Improve security by enforcing SSL termination at ALB.
-
-Migrate to a Multi-AZ Architecture
-Improve fault tolerance and reduce downtime risk.
-
-----
-
 ## 📸 Project Screenshots
 
 A ZIP file containing all the architecture and deployment screenshots is included in this repository.
@@ -275,4 +239,38 @@ Application Load Balancer (ALB)
 Target Groups
 
 AWS VPC networking
+
+---
+
+## 🚀 Future Enhancements
+
+Add CI/CD Pipeline (GitHub Actions / AWS CodePipeline)
+Automate image building, security scanning, and deployments to ECS.
+
+Enable Autoscaling Policies
+Scale tasks based on CPU, memory, or ALB request count.
+
+Add Centralized Logging
+Ship logs to CloudWatch Logs or OpenSearch for better observability.
+
+Introduce a Service Mesh (AWS App Mesh)
+Provides traffic routing, retries, and metrics for microservices.
+
+Enhance Security with IAM Roles for Tasks
+Follow least-privilege access for AWS service integrations.
+
+Add Health Checks & Graceful Shutdown Logic
+Improve reliability by properly handling task stop/start.
+
+Implement Blue/Green Deployments
+Use CodeDeploy or versioned task definitions for zero-downtime releases.
+
+Container Image Scanning
+Use ECR Scan or Trivy to ensure the container is secure.
+
+Add HTTPS with ACM and Application Load Balancer
+Improve security by enforcing SSL termination at ALB.
+
+Migrate to a Multi-AZ Architecture
+Improve fault tolerance and reduce downtime risk.
 

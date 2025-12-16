@@ -236,4 +236,43 @@ Improve security by enforcing SSL termination at ALB.
 Migrate to a Multi-AZ Architecture
 Improve fault tolerance and reduce downtime risk.
 
+----
+
+## 📸 Project Screenshots
+
+A ZIP file containing all the architecture and deployment screenshots is included in this repository.
+
+You can download it here:
+```
+👉 screenshots.zip
+```
+This file contains:
+
+ECR Repository (repo + images)
+
+ECS Cluster (overview)
+
+ECS Task Definition
+
+ECS Service
+
+Running Task Details
+
+Application Load Balancer
+
+Target Group Health Check
+
+Browser Output Screenshot
+
+These screenshots verify that the project was deployed successfully using:
+
+Amazon ECR
+
+Amazon ECS Fargate
+
+Application Load Balancer (ALB)
+
+Target Groups
+
+AWS VPC networking
 

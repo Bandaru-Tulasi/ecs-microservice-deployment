@@ -4,39 +4,64 @@ on:
   push:
     branches: [ "main" ]
 
-env:
-  AWS_REGION: us-east-1
-  ECR_REPOSITORY: ecs-microservice
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+    # -------------------------------
+    # 1. CHECKOUT CODE
+    # -------------------------------
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # -------------------------------
+    # 2. CONFIGURE AWS CREDENTIALS
+    # -------------------------------
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+        aws-region: us-east-1
 
+    # -------------------------------
+    # 3. LOGIN TO AMAZON ECR
+    # -------------------------------
     - name: Login to Amazon ECR
-      uses: aws-actions/amazon-ecr-login@v2
+      uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push Docker image to ECR
+    # -------------------------------
+    # 4. BUILD, TAG, AND PUSH IMAGE
+    # -------------------------------
+    - name: Build, tag, and push Docker image to Amazon ECR
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REGISTRY: 766377908037.dkr.ecr.us-east-1.amazonaws.com
+        ECR_REPOSITORY: ecs-microservice
+        IMAGE_TAG: latest
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker build -t $ECR_REPOSITORY .
+        docker tag $ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: Deploy new version to ECS
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+    # -------------------------------
+    # 5. RENDER TASK DEFINITION
+    # -------------------------------
+    - name: Render Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ecs-microservice-task.json
+        container-name: ecs-microservice
+        image: 766377908037.dkr.ecr.us-east-1.amazonaws.com/ecs-microservice:latest
+
+    # -------------------------------
+    # 6. DEPLOY TO ECS SERVICE
+    # -------------------------------
+    - name: Deploy Amazon ECS task
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ecs-microservice-service
         cluster: ecs-microservice-cluster
         wait-for-service-stability: true

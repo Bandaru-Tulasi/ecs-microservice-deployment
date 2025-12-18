@@ -10,7 +10,6 @@
     {
       "name": "ecs-microservice",
       "image": "",
-      "essential": true,
       "portMappings": [
         {
           "containerPort": 8080,
@@ -18,6 +17,7 @@
           "protocol": "tcp"
         }
       ],
+      "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {

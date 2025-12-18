@@ -1,31 +1,50 @@
-{
-  "family": "ecs-microservice-task",
-  "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"],
-  "cpu": "256",
-  "memory": "512",
-  "executionRoleArn": "arn:aws:iam::766377908037:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::766377908037:role/ecsTaskExecutionRole",
-  "containerDefinitions": [
-    {
-      "name": "ecs-microservice",
-      "image": "",
-      "portMappings": [
-        {
-          "containerPort": 8080,
-          "hostPort": 8080,
-          "protocol": "tcp"
-        }
-      ],
-      "essential": true,
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/ecs-microservice",
-          "awslogs-region": "us-east-1",
-          "awslogs-stream-prefix": "ecs"
-        }
-      }
-    }
-  ]
-}
+name: Deploy to ECS Fargate
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push Docker image
+      id: build-image
+      env:
+        ECR_REGISTRY: 766377908037.dkr.ecr.us-east-1.amazonaws.com
+        ECR_REPOSITORY: ecs-microservice
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Render task definition with new image
+      id: render-task
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ecs-microservice-task.json
+        container-name: ecs-microservice
+        image: ${{ steps.build-image.outputs.IMAGE_URI }}
+
+    - name: Deploy to ECS
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.render-task.outputs.task-definition }}
+        service: ecs-microservice-service
+        cluster: ecs-microservice-cluster
+        wait-for-service-stability: true

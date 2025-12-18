@@ -10,15 +10,19 @@
   "containerDefinitions": [
     {
       "name": "ecs-microservice",
-      "image": "",
+
+      "image": "", 
+      // IMPORTANT: Leave this EMPTY. GitHub Actions injects new digest.
+
       "portMappings": [
         {
           "containerPort": 8080,
-          "hostPort": 8080,
           "protocol": "tcp"
         }
       ],
+
       "essential": true,
+
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {

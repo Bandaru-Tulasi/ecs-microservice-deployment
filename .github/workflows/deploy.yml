@@ -9,15 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # -------------------------------
-    # 1. CHECKOUT CODE
-    # -------------------------------
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # -------------------------------
-    # 2. CONFIGURE AWS CREDENTIALS
-    # -------------------------------
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -25,42 +19,29 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    # -------------------------------
-    # 3. LOGIN TO AMAZON ECR
-    # -------------------------------
     - name: Login to Amazon ECR
-      id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    # -------------------------------
-    # 4. BUILD, TAG, AND PUSH IMAGE
-    # -------------------------------
-    - name: Build, tag, and push Docker image to Amazon ECR
+    - name: Build, tag, and push Docker image
+      id: build-image
       env:
         ECR_REGISTRY: 766377908037.dkr.ecr.us-east-1.amazonaws.com
         ECR_REPOSITORY: ecs-microservice
         IMAGE_TAG: latest
       run: |
-        docker build -t $ECR_REPOSITORY .
-        docker tag $ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    # -------------------------------
-    # 5. RENDER TASK DEFINITION
-    # Forces ECS to use NEW image digest
-    # -------------------------------
-    - name: Render Amazon ECS task definition
+    - name: Render task definition with new image
       id: render-task
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ecs-microservice-task.json
         container-name: ecs-microservice
-        image: 766377908037.dkr.ecr.us-east-1.amazonaws.com/ecs-microservice:latest
+        image: ${{ steps.build-image.outputs.IMAGE_URI }}
 
-    # -------------------------------
-    # 6. DEPLOY UPDATED TASK DEFINITION
-    # -------------------------------
-    - name: Deploy Amazon ECS task
+    - name: Deploy to ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.render-task.outputs.task-definition }}

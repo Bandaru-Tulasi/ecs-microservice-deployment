@@ -4,9 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "EC2 CI/CD TEST — VERSION 100"
-
-
+    return "Hello from NEW VERSION deployed via CI/CD!"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)

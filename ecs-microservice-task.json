@@ -10,10 +10,7 @@
   "containerDefinitions": [
     {
       "name": "ecs-microservice",
-
-      "image": "", 
-      // LEFT EMPTY — GitHub Actions will inject the new ECR image with SHA digest
-
+      "image": "",
       "portMappings": [
         {
           "containerPort": 8080,
@@ -21,9 +18,7 @@
           "protocol": "tcp"
         }
       ],
-
       "essential": true,
-
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {

@@ -6,23 +6,17 @@
   "memory": "512",
   "executionRoleArn": "arn:aws:iam::766377908037:role/ecsTaskExecutionRole",
   "taskRoleArn": "arn:aws:iam::766377908037:role/ecsTaskExecutionRole",
-
   "containerDefinitions": [
     {
       "name": "ecs-microservice",
-
-      "image": "", 
-      // IMPORTANT: Leave this EMPTY. GitHub Actions injects new digest.
-
+      "image": "",
       "portMappings": [
         {
           "containerPort": 8080,
           "protocol": "tcp"
         }
       ],
-
       "essential": true,
-
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {

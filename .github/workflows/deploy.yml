@@ -29,6 +29,7 @@ jobs:
     # 3. LOGIN TO AMAZON ECR
     # -------------------------------
     - name: Login to Amazon ECR
+      id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
     # -------------------------------
@@ -46,9 +47,10 @@ jobs:
 
     # -------------------------------
     # 5. RENDER TASK DEFINITION
+    # Forces ECS to use NEW image digest
     # -------------------------------
     - name: Render Amazon ECS task definition
-      id: task-def
+      id: render-task
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ecs-microservice-task.json
@@ -56,12 +58,12 @@ jobs:
         image: 766377908037.dkr.ecr.us-east-1.amazonaws.com/ecs-microservice:latest
 
     # -------------------------------
-    # 6. DEPLOY TO ECS SERVICE
+    # 6. DEPLOY UPDATED TASK DEFINITION
     # -------------------------------
     - name: Deploy Amazon ECS task
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        task-definition: ${{ steps.render-task.outputs.task-definition }}
         service: ecs-microservice-service
         cluster: ecs-microservice-cluster
         wait-for-service-stability: true

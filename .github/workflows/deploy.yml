@@ -37,7 +37,7 @@ jobs:
       id: render-task
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: .github/workflows/ecs-microservice-task.json
+        task-definition: ecs-microservice-task.json   # FIXED PATH
         container-name: ecs-microservice
         image: ${{ steps.build-image.outputs.IMAGE_URI }}
 

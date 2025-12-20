@@ -2,7 +2,7 @@ name: Deploy to ECS Fargate
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
@@ -22,22 +22,22 @@ jobs:
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push Docker image
+    - name: Build and push Docker image
       id: build-image
       env:
         ECR_REGISTRY: 766377908037.dkr.ecr.us-east-1.amazonaws.com
         ECR_REPOSITORY: ecs-microservice
-        IMAGE_TAG: latest
+        IMAGE_TAG: ${{ github.run_number }}
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    - name: Render task definition with new image
+    - name: Render task definition
       id: render-task
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ecs-microservice-task.json   # FIXED PATH
+        task-definition: ecs-microservice-task.json
         container-name: ecs-microservice
         image: ${{ steps.build-image.outputs.IMAGE_URI }}
 
